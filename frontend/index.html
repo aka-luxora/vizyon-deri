@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1d1b17">
+  <title>Vizyon Deri · Üretim Planı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="masthead">
+    <a class="brand" href="#top" aria-label="Vizyon Deri planlama ana sayfa">
+      <span class="brand-mark">V</span>
+      <span>VİZYON DERİ<small>TALEP &amp; ÜRETİM PLANI</small></span>
+    </a>
+    <div class="header-tools">
+      <label class="identity-field"><span>KULLANICI</span><input id="actorName" value="Planlama Uzmanı" aria-label="Kullanıcı adı"></label>
+      <label class="role-field"><span>ROL</span><select id="actorRole" aria-label="Kullanıcı rolü"><option value="planner">Planlamacı</option><option value="approver">Onaycı</option><option value="publisher">Yayıncı</option><option value="admin">Yönetici</option><option value="viewer">İzleyici</option></select></label>
+      <div class="source-state"><i></i><span>VERİ KAYNAĞI</span><b id="sourceState">Demo snapshot</b></div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="kicker">2026 / 27 · KIŞ SEZONU</p>
+        <h1>Talebi görün.<br><em>Açığı üretime çevirin.</em></h1>
+        <p class="hero-note">Geçen yılın aynı dönemindeki net satıştan başlayın; büyüme hedefini uygulayın, satılabilir stoğu düşün ve üretilecek adedi doğru depoya yönlendirin.</p>
+      </div>
+      <div class="method-stamp" aria-label="Kullanılan yöntem">
+        <span>TEK YÖNTEM</span>
+        <b>Eş dönem net satış</b>
+        <i>×</i>
+        <b>Büyüme çarpanı</b>
+        <small>İstatistiksel alternatif veya eski SKU eşlemesi yoktur.</small>
+      </div>
+    </section>
+
+    <section class="planner" aria-labelledby="plannerTitle">
+      <div class="section-heading">
+        <span>01</span>
+        <div><p>PLAN REÇETESİ</p><h2 id="plannerTitle">Üretim kapsamını belirleyin</h2></div>
+        <p>Hedef dönemin bir yıl önceki karşılığı sistem tarafından otomatik oluşturulur.</p>
+      </div>
+
+      <form id="planForm">
+        <div class="filter-ledger">
+          <fieldset>
+            <legend>Tür</legend>
+            <label><input type="checkbox" name="productType" value="Kürk" checked><span>Kürk</span></label>
+            <label><input type="checkbox" name="productType" value="Deri" checked><span>Deri</span></label>
+          </fieldset>
+          <fieldset>
+            <legend>Statü</legend>
+            <label><input type="checkbox" name="status" value="S1" checked><span>S1</span></label>
+          </fieldset>
+          <fieldset>
+            <legend>Marka</legend>
+            <label><input type="checkbox" name="brand" value="VSP" checked><span>VSP</span></label>
+          </fieldset>
+        </div>
+
+        <div class="parameter-grid">
+          <label class="date-field">
+            <span>Hedef başlangıç</span>
+            <input id="targetStart" type="date" value="2026-11-01" required>
+          </label>
+          <label class="date-field">
+            <span>Hedef bitiş</span>
+            <input id="targetEnd" type="date" value="2027-02-28" required>
+          </label>
+          <div class="reference-card">
+            <span>Karşılaştırılacak eş dönem</span>
+            <b id="referencePeriod">01.11.2025 — 28.02.2026</b>
+            <small>Eylül 2025 sonrası yeni ürün yapısı</small>
+          </div>
+          <label class="growth-field">
+            <span>Büyüme çarpanı</span>
+            <input id="growthFactor" type="number" min="0.01" max="10" step="0.01" value="1.8" required>
+            <small id="growthMeaning">Geçmiş net satışın %180'i</small>
+          </label>
+        </div>
+
+        <div class="run-bar">
+          <div><span>HESAP</span><p><b>Net satış × büyüme</b> − satılabilir stok = <b>üretim ihtiyacı</b></p></div>
+          <button class="run-button" id="runPlan" type="submit"><span>Planı çalıştır</span><i>→</i></button>
+        </div>
+      </form>
+    </section>
+
+    <section class="results" id="results" aria-labelledby="resultsTitle">
+      <div class="section-heading">
+        <span>02</span>
+        <div><p>SONUÇ</p><h2 id="resultsTitle">Üretim karar panosu</h2></div>
+        <p id="scopeText">VSP · S1 · Kürk + Deri</p>
+      </div>
+
+      <div id="warningBox" class="warning-box" hidden></div>
+
+      <div class="control-ledger">
+        <div><span>PLAN KİMLİĞİ</span><b id="planId">—</b></div>
+        <div><span>VERSİYON</span><b id="planVersion">—</b></div>
+        <div><span>VERİ ANI</span><b id="sourceTimestamp">—</b></div>
+        <div><span>DURUM</span><b id="planStatus" class="status-pill">—</b></div>
+        <div class="workflow-actions" id="workflowActions"></div>
+      </div>
+
+      <div class="quality-panel">
+        <div class="quality-head"><div><p>VERİ GÜVENCESİ</p><h3>Plan yayımlanmadan önce yedi kontrol</h3></div><b id="qualityScore">—</b></div>
+        <div id="qualityChecks" class="quality-grid"></div>
+      </div>
+
+      <div class="period-ribbon">
+        <div><span>REFERANS DÖNEM</span><b id="referenceLabel">—</b></div>
+        <i>× <strong id="growthLabel">1,8</strong></i>
+        <div><span>HEDEF DÖNEM</span><b id="targetLabel">—</b></div>
+      </div>
+
+      <div class="kpi-grid">
+        <article><span>EŞ DÖNEM NET SATIŞ</span><b id="kpiNet">—</b><small>adet</small></article>
+        <article><span>HEDEF SATIŞ BEKLENTİSİ</span><b id="kpiForecast">—</b><small>adet</small></article>
+        <article><span>SATILABİLİR STOK</span><b id="kpiStock">—</b><small>adet</small></article>
+        <article class="kpi-accent"><span>ÜRETİM İHTİYACI</span><b id="kpiProduction">—</b><small>adet</small></article>
+      </div>
+
+      <div class="decision-layout">
+        <div class="table-panel">
+          <div class="panel-head">
+            <div><p>ÜRÜN / BEDEN</p><h3>Üretim öncelikleri</h3></div>
+            <div class="table-actions">
+              <label><span class="sr-only">Tabloda ara</span><input id="tableSearch" type="search" placeholder="Model, SKU veya beden ara"></label>
+              <button id="exportCsv" type="button">CSV indir ↓</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Öncelik</th><th>Ürün / beden</th><th>Net satış</th><th>Tahmin</th><th>Stok</th><th>Kapsama</th><th>Üretim</th><th></th></tr></thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+          <div class="table-foot"><span id="rowCount">0 ürün/beden</span><span>Öncelik: stok yok → düşük kapsama → açık adedi</span></div>
+        </div>
+
+        <aside class="allocation-panel">
+          <div class="panel-head inverse"><div><p>DEPO ALOKASYONU</p><h3>1.900 adedi nereye?</h3></div></div>
+          <div id="allocationList" class="allocation-list"></div>
+          <div class="allocation-rule"><span>ORDER TYPE</span><p><b>Zalando Fulfilled</b> → Zalando Offerable<br><b>Partner Fulfilled</b> → Ekol / Paris lokasyonu</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="proof" aria-labelledby="proofTitle">
+      <div class="section-heading">
+        <span>03</span>
+        <div><p>HESAP İZİ</p><h2 id="proofTitle">Her adet açıklanabilir</h2></div>
+        <p>Toplam karar, ürün ve beden seviyesindeki doğrulanabilir satırların toplamıdır.</p>
+      </div>
+      <div class="waterfall" aria-label="Planlama hesap akışı">
+        <div><span>01</span><small>BRÜT SATIŞ</small><b id="wfGross">—</b></div><i>−</i>
+        <div><span>02</span><small>İADE</small><b id="wfReturns">—</b></div><i>=</i>
+        <div><span>03</span><small>NET SATIŞ</small><b id="wfNet">—</b></div><i>×</i>
+        <div><span>04</span><small>BÜYÜME</small><b id="wfGrowth">—</b></div><i>−</i>
+        <div><span>05</span><small>STOK</small><b id="wfStock">—</b></div><i>=</i>
+        <div class="waterfall-result"><span>06</span><small>ÜRETİM</small><b id="wfProduction">—</b></div>
+      </div>
+    </section>
+
+    <section class="history" aria-labelledby="historyTitle">
+      <div class="section-heading">
+        <span>04</span>
+        <div><p>PLAN DEFTERİ</p><h2 id="historyTitle">Sürümler ve karar geçmişi</h2></div>
+        <p>Her çalıştırma ayrı kaydedilir; önceki kararlar silinmez ve denetim izi korunur.</p>
+      </div>
+      <div class="history-panel">
+        <div class="history-head"><span>SON PLANLAR</span><button id="refreshHistory" type="button">Yenile ↻</button></div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="detailDialog">
+    <button class="dialog-close" aria-label="Kapat">×</button>
+    <p class="kicker">ÜRÜN / BEDEN HESAP İZİ</p>
+    <h2 id="detailTitle"></h2>
+    <div id="detailContent"></div>
+  </dialog>
+
+  <dialog id="overrideDialog" class="override-dialog">
+    <button class="dialog-close override-close" aria-label="Kapat">×</button>
+    <p class="kicker">KONTROLLÜ MANUEL REVİZYON</p>
+    <h2 id="overrideTitle">Üretim adedini revize et</h2>
+    <form id="overrideForm">
+      <input id="overrideSku" type="hidden">
+      <label><span>YENİ ÜRETİM İHTİYACI</span><input id="overrideQuantity" type="number" min="0" step="1" required></label>
+      <label><span>GEREKÇE</span><textarea id="overrideReason" minlength="8" maxlength="500" required placeholder="Örn. Tedarikçinin minimum kesim adedi nedeniyle…"></textarea></label>
+      <p>Revizyon yalnızca taslak planda yapılır; kullanıcı, zaman, eski/yeni değer ve gerekçe denetim izine yazılır.</p>
+      <button class="run-button" type="submit"><span>Revizyonu kaydet</span><i>→</i></button>
+    </form>
+  </dialog>
+
+  <dialog id="auditDialog" class="audit-dialog">
+    <button class="dialog-close audit-close" aria-label="Kapat">×</button>
+    <p class="kicker">DENETİM İZİ</p>
+    <h2>Plan karar günlüğü</h2>
+    <div id="auditTimeline" class="audit-timeline"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

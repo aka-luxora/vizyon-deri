@@ -1,0 +1,38 @@
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      PLANNING_DB_PATH: /data/planning.db
+      NETSUITE_ACCOUNT_ID: ${NETSUITE_ACCOUNT_ID:-}
+      NETSUITE_CONSUMER_KEY: ${NETSUITE_CONSUMER_KEY:-}
+      NETSUITE_CONSUMER_SECRET: ${NETSUITE_CONSUMER_SECRET:-}
+      NETSUITE_TOKEN_ID: ${NETSUITE_TOKEN_ID:-}
+      NETSUITE_TOKEN_SECRET: ${NETSUITE_TOKEN_SECRET:-}
+      NETSUITE_FIELD_SIZE: ${NETSUITE_FIELD_SIZE:-}
+      NETSUITE_FIELD_COLOR: ${NETSUITE_FIELD_COLOR:-}
+      NETSUITE_FIELD_BRAND: ${NETSUITE_FIELD_BRAND:-}
+      NETSUITE_FIELD_TYPE: ${NETSUITE_FIELD_TYPE:-}
+      NETSUITE_FIELD_STATUS: ${NETSUITE_FIELD_STATUS:-}
+      NETSUITE_FIELD_ORDER_TYPE: ${NETSUITE_FIELD_ORDER_TYPE:-}
+      NETSUITE_PAGE_SIZE: ${NETSUITE_PAGE_SIZE:-1000}
+      NETSUITE_TIMEOUT_SECONDS: ${NETSUITE_TIMEOUT_SECONDS:-45}
+      NETSUITE_LOCATION_ALIASES: ${NETSUITE_LOCATION_ALIASES:-}
+    volumes:
+      - planning-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8787:80"
+
+volumes:
+  planning-data:
